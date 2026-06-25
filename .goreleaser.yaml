@@ -40,6 +40,7 @@ brews:
       name: homebrew-tap
       branch: main
       token: "{{ .Env.GITHUB_TOKEN }}"
+    directory: Formula
     homepage: https://github.com/faizmokh/pemline
     description: "Inline a PEM private key into a single escaped line"
     license: MIT
