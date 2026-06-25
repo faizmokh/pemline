@@ -1,0 +1,63 @@
+version: 2
+
+project_name: pemline
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: pemline
+    main: .
+    binary: pemline
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - formats: [tar.gz]
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else }}{{ .Arch }}{{ end }}
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+
+brews:
+  - name: pemline
+    repository:
+      owner: faizmokh
+      name: homebrew-tap
+      branch: main
+      token: "{{ .Env.GITHUB_TOKEN }}"
+    homepage: https://github.com/faizmokh/pemline
+    description: "Inline a PEM private key into a single escaped line"
+    license: MIT
+    test: |
+      system "#{bin}/pemline", "--version"
+
+checksum:
+  name_template: "checksums.txt"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+
+release:
+  github:
+    owner: faizmokh
+    name: pemline
